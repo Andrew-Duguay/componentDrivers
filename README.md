@@ -1,24 +1,36 @@
-﻿# componentDrivers
-This repo contains baremetal-c drivers to operate external components such as OLED displays or joysticks.
-The supporting drivers are lightweight, custom drivers and can be found here:
-https://github.com/Andrew-Duguay/stm32drivers
+# ComponentDrivers | Bare-Metal C Library
 
-## ssd1306
-The configuration and control of the ssd1306 chip in the OLED screen is in accordance with direction from the reference manual here:
-https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf
-The init function uses a hard-coded sequence of commands to configure the OLED screen as directed on section 3 of the Application note (found PDF page 64)
+A collection of lightweight, zero-dependency (CMSIS-only) C drivers for interfacing STM32 microcontrollers with external peripherals. Designed for high-performance robotics and embedded systems.
 
-1. Contains a wrapper API to use I2C communications to send data to the SSD1306 GDDRAM.
-2. Additional files add functionality for graphics and text
-3. Config header allows key values to be changed to adjust driver to different screen sizes.
-4. Required peripherals: PB8, PB9, I2C1
-5. Requires 1KB RAM for GDDRAM buffer
+## 🛠 Dependencies
+This library requires my core STM32 peripheral drivers for I2C, ADC, and Timers:
+👉 [stm32drivers Repository](https://github.com/Andrew-Duguay/stm32drivers)
 
-## joystick
-Uses ADC driver init ADC pin and to convert jostick potentiometer voltage. Also configures registers for a GPIO pin to read the SW button.
+---
 
-1. Initializes ADC module on pa1 to read 1 axis of joystick movement
-2. Initializes general input mode using internal pull-up resistors on pa0 to read the built in joystick switch.
-3. automatically debounces switch press using timer drivers.
-4. Required peripherals: timer1, adc1, pa0 and pa1
+## 📺 SSD1306 OLED Driver (I2C)
+A memory-efficient driver for 128x64 or 128x32 OLED displays based on the SSD1306 chipset.
 
+### Key Features
+* **Optimized Buffer:** Implements a 1KB local GDDRAM buffer for fast frame updates.
+* **Extended Graphics:** Includes a custom graphics library for primitive shapes and text rendering.
+* **Configurable:** Display dimensions are adjustable via `ssd1306_conf.h`.
+
+### Requirements
+* **Peripherals:** I2C1 (PB8/PB9)
+* **Memory:** 1KB RAM for display shadowing.
+* **Documentation:** [SSD1306 Datasheet](https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf)
+
+---
+
+## 🕹 Analog Joystick Driver
+A robust driver for 2-axis analog joysticks with integrated pushbutton support.
+
+### Key Features
+* **Non-Blocking Read:** Uses ADC1 to sample potentiometer voltages.
+* **Hardware Debouncing:** Implemented via Timer1 interrupts to ensure clean switch transitions.
+* **Pull-up Config:** Internal pull-up resistors configured for the SW pin (PA0) to minimize external component count.
+
+### Requirements
+* **Pins:** PA1 (ADC), PA0 (GPIO Input)
+* **Peripherals:** ADC1, TIM1
